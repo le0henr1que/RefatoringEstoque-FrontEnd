@@ -1,12 +1,16 @@
 import react from 'react'
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
+import Header from '../../components/Header';
+// import Container from '@mui/material/Container';
+import * as S from './styles'
 
 function Home(){
     return(
-        <Stack sx={{ width: '100%' }} spacing={2}>
-            <Alert severity="success">Usuário Logado com Sucesso!</Alert>
-        </Stack>
+        <S.Container maxWidth="" sx={{ width: 1}} >
+            <Header />
+           
+        </S.Container>
     )
 }
 export default Home

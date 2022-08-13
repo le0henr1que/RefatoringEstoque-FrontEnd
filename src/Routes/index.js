@@ -5,7 +5,7 @@ import {AuthProvider} from "../providers/auth";
 
 import PrivateRoute from "./privateRoute";
 
-import Home from '../views/Home'
+import Dashboard from '../views/Home'
 import SignIn from '../views/Login'
 
 export default function Rout(){
@@ -14,7 +14,7 @@ export default function Rout(){
             <AuthProvider>
                 <Routes>
                     <Route exact path="/" element={<SignIn/>}/>
-                    <Route path="/Home" element={<PrivateRoute Component={Home} />}/>
+                    <Route path="/Dashboard" element={<PrivateRoute Component={Dashboard} />}/>
                 </Routes>
             </AuthProvider>
         </BrowserRouter>

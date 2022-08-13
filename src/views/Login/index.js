@@ -43,7 +43,7 @@ export default function SignIn() {
         event.preventDefault();
       
         setUser({user:`${mail}`, senha:`${password}`})
-        navigate('/Home')
+        navigate('/Dashboard')
         console.log(user.user)
      
        
