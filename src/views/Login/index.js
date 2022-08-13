@@ -1,4 +1,4 @@
-import react, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate, Navigate } from "react-router-dom";
+import {useAuth} from '../../providers/auth'
 
 function Copyright(props) {
   return (
@@ -30,24 +31,28 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
-
+    // destrutured
+    const {user, setUser} = useAuth()
+    // const user = useAuth
+    console.log(user)
     const [mail, setMail] = useState()
     const [password, setPassword] = useState()
-    const [redirect, setRedirect] = useState(false)
+    const navigate = useNavigate();
 
     const onSubmit = (event) => {
         event.preventDefault();
       
-        if(mail === 'admin@admin.com' && password == '123'){
-            setRedirect(true)
-        }
+        setUser({user:`${mail}`, senha:`${password}`})
+        navigate('/Home')
+        console.log(user.user)
+     
+       
     };
 
   
   return (
     
     <ThemeProvider theme={theme}>
-    {redirect && <Navigate to="/Home" /> }
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
