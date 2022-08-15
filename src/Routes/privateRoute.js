@@ -3,10 +3,10 @@ import { Navigate } from 'react-router-dom'
 import {useAuth} from '../providers/auth'
 
 const PrivateRoute = ({Component}) => {
-    const {user} = useAuth()
+    const {token} = useAuth()
     return (
     
-            user.user == "admin@admin.com" && user.senha == '123admin' ? <Component /> : <Navigate to="/" />
+            token == false ? <Navigate to="/" /> : <Component /> 
 
         )
     };

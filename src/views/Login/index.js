@@ -14,6 +14,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate, Navigate } from "react-router-dom";
 import {useAuth} from '../../providers/auth'
+import api from '../../services/api'
 
 function Copyright(props) {
   return (
@@ -32,19 +33,28 @@ const theme = createTheme();
 
 export default function SignIn() {
     // destrutured
-    const {user, setUser} = useAuth()
+    const {token, setToken} = useAuth()
     // const user = useAuth
-    console.log(user)
+
     const [mail, setMail] = useState()
     const [password, setPassword] = useState()
     const navigate = useNavigate();
 
+    async function login(){
+      await api.post(`/login`, {   "email":`${mail}`,  "password":`${password}`})
+      .then((response) =>{
+        setToken(response.data.token)
+      })
+      .catch((error) => console.log(error))
+    }
+
+
     const onSubmit = (event) => {
         event.preventDefault();
-      
-        setUser({user:`${mail}`, senha:`${password}`})
+        login()
+        console.log(token)
         navigate('/Dashboard')
-        console.log(user.user)
+     
      
        
     };
