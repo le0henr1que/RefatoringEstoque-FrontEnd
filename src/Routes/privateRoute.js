@@ -3,10 +3,10 @@ import { Navigate } from 'react-router-dom'
 import {useAuth} from '../providers/auth'
 
 const PrivateRoute = ({Component}) => {
-    const {token} = useAuth()
+    const recoveredToken = localStorage.getItem('token')
     return (
     
-            token == false ? <Navigate to="/" /> : <Component /> 
+        !recoveredToken ? <Navigate to="/" /> : <Component /> 
 
         )
     };

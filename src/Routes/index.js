@@ -13,7 +13,7 @@ export default function Rout(){
         <BrowserRouter>
             <AuthProvider>
                 <Routes>
-                    <Route exact path="/" element={<SignIn/>}/>
+                    <Route exact path="/" element={<SignIn/> }/>
                     <Route path="/Dashboard" element={<PrivateRoute Component={Dashboard} />}/>
                 </Routes>
             </AuthProvider>

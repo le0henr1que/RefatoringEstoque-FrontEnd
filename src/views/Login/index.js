@@ -39,26 +39,34 @@ export default function SignIn() {
     const [mail, setMail] = useState()
     const [password, setPassword] = useState()
     const navigate = useNavigate();
-
-    async function login(){
+    const [loading, setLoading] = useState(true)
+    
+    const onSubmit = async (event) => {
+      event.preventDefault();
+      
+   
       await api.post(`/login`, {   "email":`${mail}`,  "password":`${password}`})
       .then((response) =>{
+        
+        localStorage.setItem('token',response.data.token) 
         setToken(response.data.token)
+        navigate('/Dashboard')
+
       })
       .catch((error) => console.log(error))
-    }
 
-
-    const onSubmit = (event) => {
-        event.preventDefault();
-        login()
-        console.log(token)
-        navigate('/Dashboard')
-     
-     
-       
     };
 
+    useEffect(() => {
+      const recoveredToken = localStorage.getItem('token')
+
+      if(recoveredToken){
+        setToken(recoveredToken)
+      }
+
+      setLoading(false)
+
+    }, [])
   
   return (
     
