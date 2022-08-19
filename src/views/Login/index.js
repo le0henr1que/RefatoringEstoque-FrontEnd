@@ -66,6 +66,12 @@ export default function SignIn() {
 
       setLoading(false)
 
+      // if(!localStorage.getItem('token')){
+      //   navigate('/')
+      // }else{
+      //   navigate('/Dashboard')
+      // }
+
     }, [])
   
   return (
