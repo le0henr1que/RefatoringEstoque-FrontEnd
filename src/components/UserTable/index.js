@@ -9,8 +9,10 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import api from '../../services/api';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { Backdrop, Fade, Modal, Typography } from '@mui/material';
+import { Backdrop, Button, Fade, MenuItem, Modal, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
+import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
+import FilterListOffOutlinedIcon from '@mui/icons-material/FilterListOffOutlined';
 
 const columns = [
   { id: 'name', label: 'Name', minWidth: 170,  align: 'left',},
@@ -53,7 +55,8 @@ const style = {
 
 export default function UserTable() {
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+  const [dataUser, setDataUser] = useState([])
+  // const handleOpen = () => {setOpen(true);}
   const handleClose = () => setOpen(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -84,6 +87,18 @@ function getUsers(){
     })
     .catch((error) => {console.log(error);})
   }
+  const currencies = [
+    {
+      value: 'Compras',
+      label: 'Compras',
+    },
+    {
+      value: 'Estoque',
+      label: 'Estoque',
+    },
+   
+  ];
+
 
   React.useEffect(() => {
      getUsers()
@@ -95,7 +110,7 @@ function getUsers(){
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={open}
-        onClose={handleClose}
+        // onClose={handleClose}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -105,14 +120,47 @@ function getUsers(){
         <Fade in={open}>
           <Box sx={style}>
             <Typography id="transition-modal-title" variant="h6" component="h2">
-              Text in a modal
+             Editar
+            </Typography>
+            <Typography id="transition-modal-description" sx={{ mt: 2}}>
+              <TextField id="outlined-basic" label="Nome" sx={{width:'100%'}} variant="outlined" value={dataUser.name} />
             </Typography>
             <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+              <TextField id="outlined-basic" label="Email" sx={{width:'100%'}} variant="outlined" value={dataUser.email} />
+            </Typography>
+            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
+              {/* <TextField id="outlined-basic" label="Area" sx={{width:'100%'}} variant="outlined" value={dataUser.area} /> */}
+                <TextField
+                id="outlined-select-currency"
+                select
+                label="Select"
+                sx={{width:'100%'}} 
+                value={dataUser.area}
+                // onChange={handleChange}
+                // helperText="Please select your currency"
+              >
+                {currencies.map((option) => (
+                  <MenuItem key={option.value} value={option.value} sx={{width:'100%'}} >
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Typography>
+            <Typography id="transition-modal-description" sx={{ mt: 2}}>
+              <Button variant="outlined" sx={{ marginRight: 2 }} onClick={() => alert('olá')}>Atualizar</Button>
+              <Button variant="contained" onClick={handleClose}>Cancelar</Button>
             </Typography>
           </Box>
         </Fade>
       </Modal>
+
+   
+      <Typography id="transition-modal-description" sx={{ mt: 2, marginRight:'16px'}}>
+        <Button variant="outlined" sx={{float:'right'}} onClick={() => setOpen(true)}>Adicionar Usuário</Button>
+        <Button variant="outlined" sx={{float:'right',  marginRight:'5px'}}><FilterListOutlinedIcon/></Button>
+        <Button variant="outlined" sx={{float:'right',  marginRight:'5px'}}><FilterListOffOutlinedIcon/></Button>
+      </Typography>
+
       <TableContainer sx={{ maxHeight: 450}}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -135,6 +183,7 @@ function getUsers(){
             {user
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
+          
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.email}>
                     {columns.map((column) => {
@@ -147,13 +196,20 @@ function getUsers(){
                         </TableCell>
                         
                       );
-                  
+                     
                     })}
-              
-                    <TableCell>
-                      <EditOutlinedIcon onClick={handleOpen} sx={{cursor:'pointer'}} />
-                    </TableCell>
-                 
+                    {
+                      
+                      <TableCell>
+                        
+                        <EditOutlinedIcon onClick={() => { 
+                          setOpen(true) 
+                          setDataUser(row)
+                          console.log(row)
+                          }} sx={{cursor:'pointer'}} />
+                        
+                      </TableCell>
+                    }
                   </TableRow>
                 );
               })} 
