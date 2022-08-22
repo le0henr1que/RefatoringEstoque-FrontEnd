@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import Header from '../../components/Header';
@@ -25,17 +25,26 @@ function Home(){
 
     // const frutasFilter = dados.filter((dado) => dado.startsWith(busca))
 
+    const [area, setArea] = useState()
+    function viewTable(){
+        alert('pode deixar que deu bom')
+    }
+    useEffect(() => {
+        const userName = localStorage.getItem('user')
+        setArea(JSON.parse(userName).area)
+      }, [])
     return(
         <React.Fragment>
         <ScopedCssBaseline  sx={{ bgcolor: '#000'}}/>
             
             <Container  sx={{ bgcolor: '#F7FAFF'}}>
-                <MenuHorizontal/>
+                <MenuHorizontal viewTable={viewTable()}/>
                 <Box sx={{ bgcolor: '#000', height: '10vh', width: "100%", position:'fixed', left:"80px", marginBottom:'100px'}}>
                     <Header />
                 </Box>
             </Container>
-            
+
+            {area == 'Administrador' &&
             <Box sx={{ width: "94%", float:'right', marginTop:'75'}}>
                 <Box sx={{ width: "94%", float:'right', height:'75px'}}>
                 </Box>
@@ -43,7 +52,8 @@ function Home(){
                     {/* <TextField id="standard-basic" label="Standard" variant="standard" /> */}
                 </Box>
                 <UserTable />
-            </Box>
+            </Box>}
+
         </React.Fragment>
       
     )
