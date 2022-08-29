@@ -18,11 +18,11 @@ import { Snackbar } from '@material-ui/core';
 
 const columns = [
   { id: 'name', label: 'Name', minWidth: 170,  align: 'left',},
-  { id: 'email', label: 'Email', minWidth: 100,  align: 'left',},
+  { id: 'descricao', label: 'Descrição', minWidth: 100,  align: 'left',},
 
   {
-    id: 'area',
-    label: 'Área',
+  id: 'Quantidade',
+    label: 'Quantidade',
     minWidth: 170,
     align: 'left',
     format: (value) => value.toLocaleString('en-US'),
@@ -90,9 +90,9 @@ export default function UserTable() {
   
 
 // Funçao que recupera os usuarios existentes
-function getUsers(){
+function getInventory(){
     const token = localStorage.getItem('token')
-    api.get(`/user`, {
+    api.get(`/showInventory`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }})
@@ -187,7 +187,7 @@ function getUsers(){
   }
 
   React.useEffect(() => {
-     getUsers()
+     getInventory()
   }, [])
 
   return (
@@ -248,7 +248,7 @@ function getUsers(){
       </Snackbar>
    
       <Typography id="transition-modal-description" sx={{ mt: 2, marginRight:'16px'}}>
-        <Button variant="outlined" sx={{float:'right'}} onClick={() => {setOpen(true); setUpOrAdd('Adicionar');  setName(''); setMail(''); setArea('')}}>Adicionar Usuario</Button>
+        <Button variant="outlined" sx={{float:'right'}} onClick={() => {setOpen(true); setUpOrAdd('Adicionar');  setName(''); setMail(''); setArea('')}}>Adicionar Produto</Button>
         <Button variant="outlined" sx={{float:'right',  marginRight:'5px'}}><FilterListOutlinedIcon/></Button>
         <Button variant="outlined" sx={{float:'right',  marginRight:'5px'}}><FilterListOffOutlinedIcon/></Button>
       </Typography>
