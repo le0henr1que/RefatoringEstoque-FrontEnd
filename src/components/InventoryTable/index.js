@@ -9,19 +9,24 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import api from '../../services/api';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { Alert, AlertTitle, Backdrop, Button, Fade, MenuItem, Modal, TextField, Typography } from '@mui/material';
+import { Alert, AlertTitle, Backdrop, Button, Fade, Grid, MenuItem, Modal, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
 import FilterListOffOutlinedIcon from '@mui/icons-material/FilterListOffOutlined';
 import { useNavigate } from 'react-router';
 import { Snackbar } from '@material-ui/core';
+import ReactDOM from "react-dom";
+import QRCode from "qrcode.react";
+import QrCode2Icon from '@mui/icons-material/QrCode2';
+import { Link } from 'react-router-dom';
+import html2canvas from 'html2canvas';
 
 const columns = [
   { id: 'name', label: 'Name', minWidth: 170,  align: 'left',},
-  { id: 'descricao', label: 'Descrição', minWidth: 100,  align: 'left',},
+  { id: 'description', label: 'Descrição', minWidth: 100,  align: 'left',},
 
   {
-  id: 'Quantidade',
+  id: 'amount',
     label: 'Quantidade',
     minWidth: 170,
     align: 'left',
@@ -30,9 +35,9 @@ const columns = [
  
 ];
 
-function createData(name, email, area) {
-  const opcao =  area;
-  return { name, email, area };
+function createData(name, edescription, amount) {
+  const opcao =  amount;
+  return { name, edescription, amount };
 }
 
 const style = {
@@ -44,6 +49,7 @@ const style = {
   bgcolor: '#FFF',
   border: '1px solid #6B97FF',
   boxShadow: 24,
+  width:'70%',
   p: 4,
 };
 
@@ -52,7 +58,7 @@ const style = {
 export default function UserTable() {
   const [user, setUser] = useState([])
   const [open, setOpen] = React.useState(false);
-  const [dataUser, setDataUser] = useState([])
+  const [dataInventory, setdataInventory] = useState([])
   // const handleOpen = () => {setOpen(true);}
   const handleClose = () => setOpen(false);
   const [page, setPage] = useState(0);
@@ -62,8 +68,8 @@ export default function UserTable() {
   const [notification, setNotification] = useState()
 
   const [name, setName] = useState()
-  const [mail, setMail] = useState()
-  const [area, setArea] = useState()
+  const [description, setDescription] = useState()
+  const [amount, setAmount] = useState()
 
   const [openNotification, setOpenNotification] = useState(false);
   const [notificationType, setNotificationType] = useState()
@@ -110,7 +116,7 @@ function getInventory(){
       console.log(error);
     })
   }
-  // Lista de select com as areas
+  // Lista de select com as amounts
   const currencies = [
     {
       value: 'Compras',
@@ -129,9 +135,8 @@ function getInventory(){
     
     var data = {
       "name": name,
-      "email": mail,
-      "password": upOrAd == 'Editar' ? dataUser.senha :"senhaPadrao",
-      "area": area
+      "description": description,
+      "amount": parseInt(amount)
     }
   
     if(upOrAd == 'Adicionar'){
@@ -140,12 +145,12 @@ function getInventory(){
     
 
       const token = localStorage.getItem('token')
-        api.post(`/user`,  data,{
+        api.post(`/inventory`,  data,{
           headers: {
             'Authorization': `Bearer ${token}`
           }})
         .then((response) =>{
- 
+          getInventory()
           setNotification(response.data.message)
           setNotificationType('success')
           setOpenNotification(true)
@@ -163,12 +168,12 @@ function getInventory(){
   
 
       const token = localStorage.getItem('token')
-      api.put(`/user/${dataUser._id}`,  data,{
+      api.put(`/updateInventory/${dataInventory._id}`,  data,{
         headers: {
           'Authorization': `Bearer ${token}`
         }})
       .then((response) =>{
-   
+        getInventory()
         setNotification(response.data.message)
         setNotificationType('success')
         setOpenNotification(true)
@@ -185,7 +190,19 @@ function getInventory(){
 
     }
   }
-
+  const downloadQRCode = () => {
+    // Generate download with use canvas and stream
+    const canvas = document.getElementById("qr-gen");
+    const pngUrl = canvas
+      .toDataURL("image/png")
+      .replace("image/png", "image/octet-stream");
+    let downloadLink = document.createElement("a");
+    downloadLink.href = pngUrl;
+    downloadLink.download = `qrc.png`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
   React.useEffect(() => {
      getInventory()
   }, [])
@@ -203,40 +220,38 @@ function getInventory(){
           timeout: 500,
         }}
       >
-        <Fade in={open}>
+        <Fade in={open} >
           <Box sx={style}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-            {upOrAd} 
-            </Typography>
-            <Typography id="transition-modal-description" sx={{ mt: 2}}>
-              <TextField id="outlined-basic" label="Nome" sx={{width:'100%'}} variant="outlined" value={name}  onChange={e => setName(e.target.value)}/>
-            </Typography>
-            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-              <TextField id="outlined-basic" label="Email" sx={{width:'100%'}} variant="outlined" value={mail} onChange={e => setMail(e.target.value)}/>
-            </Typography>
-            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-              {/* <TextField id="outlined-basic" label="Area" sx={{width:'100%'}} variant="outlined" value={dataUser.area} /> */}
-                <TextField
-                id="outlined-select-currency"
-                select
-                label="Select"
-                sx={{width:'100%'}} 
-                value={area}
-                onChange={e => setArea(e.target.value)}
-                // onChange={handleChange}
-                // helperText="Please select your currency"
-              >
-                {currencies.map((option) => (
-                  <MenuItem key={option.value} value={option.value } sx={{width:'100%'}} >
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Typography>
-            <Typography id="transition-modal-description" sx={{ mt: 2}}>
-              <Button variant="outlined" sx={{ marginRight: 2 }} onClick={() =>  updateOrAdd()}>{upOrAd}</Button>
-              <Button variant="contained" onClick={handleClose}>Cancelar</Button>
-            </Typography>
+          <Grid container columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid  xs={5} md={5}>
+              <Typography id="transition-modal-title" variant="h6" component="h2">
+              {upOrAd} 
+              </Typography>
+              <input  style={{ display: 'none' }} id="upload-photo" name="upload-photo" type="file"/>
+              <Paper variant="outlined" sx={{textAlign:'center', border:'none', cursor:'pointer'}} onClick={() => {document.getElementById("upload-photo").click();}}>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Item_sem_imagem.svg/320px-Item_sem_imagem.svg.png" />
+              </Paper>
+            </Grid>
+            <Grid  xs={7} md={7}>
+              <Typography id="transition-modal-description" sx={{ mt: 2}}>
+                <TextField id="outlined-basic" label="Nome" sx={{width:'100%'}} variant="outlined" value={name}  onChange={e => setName(e.target.value)}/>
+              </Typography>
+              <Typography id="transition-modal-description" sx={{ mt: 2 }}>
+                <TextField id="outlined-basic" label="Descrição" multiline rows={3} sx={{width:'100%'}} variant="outlined" value={description} onChange={e => setDescription(e.target.value)}/>
+              </Typography>
+              <Typography id="transition-modal-description" sx={{ mt: 2 }}>
+                <TextField type="number" id="outlined-basic" label="Quantidade" sx={{width:'100%'}} variant="outlined" value={amount} onChange={e => setAmount(e.target.value)}/>
+              </Typography>
+              <Typography id="transition-modal-description" sx={{ mt: 2}}>
+                <TextField type="number" id="outlined-basic" label="Estoque Máximo" sx={{width:'50%'}} variant="outlined" value={amount} onChange={e => setAmount(e.target.value)}/>
+                <TextField type="number" id="outlined-basic" label="Estoque Mínimo" sx={{width:'50%'}} variant="outlined" value={amount} onChange={e => setAmount(e.target.value)}/>
+              </Typography>
+              <Typography id="transition-modal-description" sx={{ mt: 2}}>
+                <Button variant="contained" sx={{float:'right'}} onClick={handleClose}>Cancelar</Button>
+                <Button variant="outlined" sx={{ marginRight: 2, float:'right' }} onClick={() =>  updateOrAdd()}>{upOrAd}</Button>
+              </Typography>
+            </Grid>
+          </Grid>
           </Box>
         </Fade>
       </Modal>
@@ -248,9 +263,10 @@ function getInventory(){
       </Snackbar>
    
       <Typography id="transition-modal-description" sx={{ mt: 2, marginRight:'16px'}}>
-        <Button variant="outlined" sx={{float:'right'}} onClick={() => {setOpen(true); setUpOrAdd('Adicionar');  setName(''); setMail(''); setArea('')}}>Adicionar Produto</Button>
+        <Button variant="outlined" sx={{float:'right'}} onClick={() => {setOpen(true); setUpOrAdd('Adicionar');  setName(''); setDescription(''); setAmount('')}}>Adicionar Produto</Button>
         <Button variant="outlined" sx={{float:'right',  marginRight:'5px'}}><FilterListOutlinedIcon/></Button>
         <Button variant="outlined" sx={{float:'right',  marginRight:'5px'}}><FilterListOffOutlinedIcon/></Button>
+
       </Typography>
 
       <TableContainer sx={{ maxHeight: 450}}>
@@ -277,7 +293,7 @@ function getInventory(){
               .map((row) => {
           
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.email}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.edescription}>
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
@@ -297,14 +313,17 @@ function getInventory(){
                         <EditOutlinedIcon onClick={() => { 
           
                           setOpen(true) 
-                          setDataUser(row)
+                          setdataInventory(row)
                           setName(row.name)
-                          setMail(row.email)
-                          setArea(row.area)
+                          setDescription(row.description)
+                          setAmount(row.amount)
                           setUpOrAdd('Editar')
                           console.log(row)
                           }} sx={{cursor:'pointer'}} />
-                        
+                          
+                          <QRCode value={row._id}  id="qr-gen" style={{width:'20px', height:'20px', cursor:'pointer', marginLeft:'5px'}} onClick={downloadQRCode}/>
+
+                          
                       </TableCell>
                     }
                   </TableRow>

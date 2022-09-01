@@ -145,7 +145,7 @@ function getUsers(){
             'Authorization': `Bearer ${token}`
           }})
         .then((response) =>{
- 
+          getUsers()
           setNotification(response.data.message)
           setNotificationType('success')
           setOpenNotification(true)
@@ -168,7 +168,7 @@ function getUsers(){
           'Authorization': `Bearer ${token}`
         }})
       .then((response) =>{
-   
+        getUsers()
         setNotification(response.data.message)
         setNotificationType('success')
         setOpenNotification(true)
