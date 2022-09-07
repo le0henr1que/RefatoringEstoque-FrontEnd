@@ -21,6 +21,15 @@ import QrCode2Icon from '@mui/icons-material/QrCode2';
 import { Link } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 
+import io from 'socket.io-client'
+import { v4 as uuidv4 } from 'uuid';
+
+
+const myId = uuidv4()
+const socket = io('http://192.168.15.7:5000')
+socket.on('connect', () => console.log('[IO] Connect => A new connection has been established'))
+
+
 const columns = [
   { id: 'name', label: 'Name', minWidth: 170,  align: 'left',},
   { id: 'description', label: 'Descrição', minWidth: 100,  align: 'left',},
@@ -321,7 +330,7 @@ function getInventory(){
                           console.log(row)
                           }} sx={{cursor:'pointer'}} />
                           
-                          <QRCode value={row._id}  id="qr-gen" style={{width:'20px', height:'20px', cursor:'pointer', marginLeft:'5px'}} onClick={downloadQRCode}/>
+                          <QRCode value={"http://192.168.15.7:5000/?idProd="+row._id}  id="qr-gen" style={{width:'20px', height:'20px', cursor:'pointer', marginLeft:'5px'}} onClick={downloadQRCode}/>
 
                           
                       </TableCell>
