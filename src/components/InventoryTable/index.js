@@ -27,7 +27,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 const myId = uuidv4()
 const socket = io('http://192.168.15.7:5000')
+
 socket.on('connect', () => console.log('[IO] Connect => A new connection has been established'))
+
+
 
 
 const columns = [
@@ -83,6 +86,10 @@ export default function UserTable() {
   const [openNotification, setOpenNotification] = useState(false);
   const [notificationType, setNotificationType] = useState()
 
+  const [idRecivedQrCode, setIdRecivedQrCode] = useState()
+
+ 
+  
   //exibir notificação
   const handleCloseNotification = (event, reason) => {
     if (reason === 'clickaway') {
@@ -148,12 +155,13 @@ function getInventory(){
       "amount": parseInt(amount)
     }
   
+    const token = localStorage.getItem('token')
+
     if(upOrAd == 'Adicionar'){
 
     //recuperando e criando payload para criar user 
     
 
-      const token = localStorage.getItem('token')
         api.post(`/inventory`,  data,{
           headers: {
             'Authorization': `Bearer ${token}`
@@ -176,8 +184,7 @@ function getInventory(){
     }else{
   
 
-      const token = localStorage.getItem('token')
-      api.put(`/updateInventory/${dataInventory._id}`,  data,{
+      api.put(`/updateInventory/${idRecivedQrCode}`,  data,{
         headers: {
           'Authorization': `Bearer ${token}`
         }})
@@ -199,6 +206,35 @@ function getInventory(){
 
     }
   }
+  
+  socket.on('openModal', function(data){
+ 
+    console.log(data)
+    setOpen(true) 
+    setUpOrAdd('Editar')
+    setIdRecivedQrCode(data)
+
+    const token = localStorage.getItem('token')
+    api.get(`/showProduct/${data}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }})
+    .then((response) =>{
+    
+     setUser(response.data)
+     getInventory()
+     
+    })
+    .catch((error) => {
+      if(error.response.status == 401){
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        navigate('/')
+      }
+    })
+
+  })
+
   const downloadQRCode = () => {
     // Generate download with use canvas and stream
     const canvas = document.getElementById("qr-gen");
@@ -326,10 +362,11 @@ function getInventory(){
                           setName(row.name)
                           setDescription(row.description)
                           setAmount(row.amount)
+                          setIdRecivedQrCode(row._id)
                           setUpOrAdd('Editar')
                           console.log(row)
                           }} sx={{cursor:'pointer'}} />
-                          
+                          {/* http://localhost:5000/?idProd=630cd302ac63e1b728d0b5d8 */}
                           <QRCode value={"http://192.168.15.7:5000/?idProd="+row._id}  id="qr-gen" style={{width:'20px', height:'20px', cursor:'pointer', marginLeft:'5px'}} onClick={downloadQRCode}/>
 
                           
