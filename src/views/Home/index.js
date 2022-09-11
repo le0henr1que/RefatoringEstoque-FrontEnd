@@ -63,13 +63,13 @@ function Home(){
                     Estoque
                 </Box>
                 <Box  sx={{display: 'flex', flexDirection:'column', alignItems:'center'}}>
-                    <Button variant="outlined" sx={{color:'#FFF', marginBottom:'5px'}} onClick={() => setTable('MSG')}><AnnouncementOutlinedIcon/></Button>
-                    Mensagem
+                    <Button variant="outlined" sx={{color:'#FFF', marginBottom:'5px'}} onClick={() => setTable('solicit')}><AnnouncementOutlinedIcon/></Button>
+                    Solici...
                 </Box>
-                <Box  sx={{display: 'flex', flexDirection:'column', alignItems:'center'}}>
+                {/* <Box  sx={{display: 'flex', flexDirection:'column', alignItems:'center'}}>
                     <Button variant="outlined" sx={{color:'#FFF', marginBottom:'5px'}} onClick={() => setTable('CONFIG')}><PermDataSettingOutlinedIcon/></Button>
                     Config...
-                </Box>
+                </Box> */}
                 </Box>
             </Box>
 
@@ -86,8 +86,8 @@ function Home(){
                 <Box sx={{ width: "94%", float:'right', height:'75px'}}></Box>
                 { table == "adm" &&  <UserTable />} 
                 { table == "Inventory" &&  <InventoryTable />} 
-                { table == "MSG" &&  <UserTable />} 
-                { table == "CONFIG" &&  <UserTable />} 
+                { table == "solicit" &&  <UserTable />} 
+                {/* { table == "CONFIG" &&  <UserTable />}  */}
 
             </Box>}
 

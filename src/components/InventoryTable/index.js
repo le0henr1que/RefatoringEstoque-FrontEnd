@@ -42,8 +42,19 @@ const columns = [
     label: 'Quantidade',
     minWidth: 170,
     align: 'left',
-    format: (value) => value.toLocaleString('en-US'),
   },
+  {
+      id: 'maxInventory',
+      label: 'Estoque Maximo',
+      minWidth: 170,
+      align: 'left',
+  },
+  {
+    id: 'minInventory',
+    label: 'Estoque Minimo',
+    minWidth: 170,
+    align: 'left',
+},
  
 ];
 
@@ -82,6 +93,8 @@ export default function UserTable() {
   const [name, setName] = useState()
   const [description, setDescription] = useState()
   const [amount, setAmount] = useState()
+  const [maxInventory, setMaxInventory] = useState()
+  const [minInventory, setMinInventory] = useState()
 
   const [openNotification, setOpenNotification] = useState(false);
   const [notificationType, setNotificationType] = useState()
@@ -152,7 +165,9 @@ function getInventory(){
     var data = {
       "name": name,
       "description": description,
-      "amount": parseInt(amount)
+      "amount": parseInt(amount),
+      "maxInventory": parseInt(maxInventory),
+      "minInventory": parseInt(minInventory)
     }
   
     const token = localStorage.getItem('token')
@@ -248,6 +263,7 @@ function getInventory(){
     downloadLink.click();
     document.body.removeChild(downloadLink);
   };
+
   React.useEffect(() => {
      getInventory()
   }, [])
@@ -288,8 +304,8 @@ function getInventory(){
                 <TextField type="number" id="outlined-basic" label="Quantidade" sx={{width:'100%'}} variant="outlined" value={amount} onChange={e => setAmount(e.target.value)}/>
               </Typography>
               <Typography id="transition-modal-description" sx={{ mt: 2}}>
-                <TextField type="number" id="outlined-basic" label="Estoque Máximo" sx={{width:'50%'}} variant="outlined" value={amount} onChange={e => setAmount(e.target.value)}/>
-                <TextField type="number" id="outlined-basic" label="Estoque Mínimo" sx={{width:'50%'}} variant="outlined" value={amount} onChange={e => setAmount(e.target.value)}/>
+                <TextField type="number" id="outlined-basic" label="Estoque Máximo" sx={{width:'50%'}} variant="outlined" value={maxInventory} onChange={e => setMaxInventory(e.target.value)}/>
+                <TextField type="number" id="outlined-basic" label="Estoque Mínimo" sx={{width:'50%'}} variant="outlined" value={minInventory} onChange={e => setMinInventory(e.target.value)}/>
               </Typography>
               <Typography id="transition-modal-description" sx={{ mt: 2}}>
                 <Button variant="contained" sx={{float:'right'}} onClick={handleClose}>Cancelar</Button>
@@ -308,7 +324,7 @@ function getInventory(){
       </Snackbar>
    
       <Typography id="transition-modal-description" sx={{ mt: 2, marginRight:'16px'}}>
-        <Button variant="outlined" sx={{float:'right'}} onClick={() => {setOpen(true); setUpOrAdd('Adicionar');  setName(''); setDescription(''); setAmount('')}}>Adicionar Produto</Button>
+        <Button variant="outlined" sx={{float:'right'}} onClick={() => {setOpen(true); setUpOrAdd('Adicionar');  setName(''); setDescription(''); setAmount(''); setMaxInventory(''); setMinInventory('')}}>Adicionar Produto</Button>
         <Button variant="outlined" sx={{float:'right',  marginRight:'5px'}}><FilterListOutlinedIcon/></Button>
         <Button variant="outlined" sx={{float:'right',  marginRight:'5px'}}><FilterListOffOutlinedIcon/></Button>
 
@@ -327,6 +343,9 @@ function getInventory(){
                   {column.label}
                 </TableCell>
               ))}
+                 <TableCell>
+                  Status
+                </TableCell>
                 <TableCell>
                   Opção
                 </TableCell>
@@ -352,7 +371,15 @@ function getInventory(){
                      
                     })}
                     {
+                      <TableCell>
+                   
+                          <Alert variant="filled"  icon={false} severity={row.amount < row.minInventory ? 'error' : row.amount > row.maxInventory ? 'success' : 'warning'  }></Alert>
                       
+                      </TableCell>
+                        
+                    }
+                    {
+              
                       <TableCell>
                         
                         <EditOutlinedIcon onClick={() => { 
@@ -362,6 +389,8 @@ function getInventory(){
                           setName(row.name)
                           setDescription(row.description)
                           setAmount(row.amount)
+                          setMinInventory(row.minInventory)
+                          setMaxInventory(row.maxInventory)
                           setIdRecivedQrCode(row._id)
                           setUpOrAdd('Editar')
                           console.log(row)
